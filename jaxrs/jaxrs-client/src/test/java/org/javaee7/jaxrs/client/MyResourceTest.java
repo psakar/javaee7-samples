@@ -7,6 +7,8 @@ package org.javaee7.jaxrs.client;
 
 import static org.junit.Assert.*;
 
+import java.io.File;
+
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
@@ -14,16 +16,48 @@ import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedHashMap;
 
+import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.arquillian.container.test.api.RunAsClient;
+import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.importer.ZipImporter;
+import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Before;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.junit.runners.MethodSorters;
 
-/**
- * @author Arun Gupta
- */
+
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
+@RunWith(Arquillian.class)
+@RunAsClient
 public class MyResourceTest {
+
+
+    private static final String DEPLOYMENT = "jaxrs-client";
+
+    @Deployment
+    public static WebArchive getDeployment() {
+
+        /*
+        File[] runtimeDependencies = Maven.resolver().resolve().withTransitivity().asFile();
+
+        WebArchive archive = ShrinkWrap.create(WebArchive.class,  DEPLOYMENT + ".war")
+            .addClass(SimpleResource.class)
+            .addClass(LocatingResource.class)
+            .addAsLibraries(runtimeDependencies)
+            .addAsWebResource(new File("src/main/webapp/index.jsp"))
+            .addAsWebInfResource(new File("src/main/webapp/WEB-INF/web.xml"))
+            .addAsWebInfResource(new File("src/main/webapp/WEB-INF/applicationContext.xml"))
+            ;
+        archive.as(ZipExporter.class).exportTo(new File(DEPLOYMENT + ".war"), true);
+        */
+        WebArchive archive =  ShrinkWrap.create(ZipImporter.class,  DEPLOYMENT + ".war").importFrom(new File("target/" + DEPLOYMENT + ".war"))
+            .as(WebArchive.class);
+
+        return archive;
+    }
 
     private WebTarget target;
     private Client client;
@@ -31,7 +65,7 @@ public class MyResourceTest {
     @Before
     public void setUp() {
         client = ClientBuilder.newClient();
-        target = client.target("http://localhost:8080/jaxrs-client/webresources/persons");
+        target = client.target("http://localhost:8080/" + DEPLOYMENT + "/webresources/persons");
     }
 
     /**

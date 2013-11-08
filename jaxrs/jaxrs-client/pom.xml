@@ -1,6 +1,25 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+
+		<maven.compiler.source>1.7</maven.compiler.source>
+		<maven.compiler.target>1.7</maven.compiler.target>
+
+		<downloadSources>true</downloadSources>
+
+		<versions.maven-surefire-plugin>2.14.1</versions.maven-surefire-plugin>
+
+		<versions.org.wildfly.wildfly-arquillian-container-managed>8.0.0.Beta1</versions.org.wildfly.wildfly-arquillian-container-managed>
+
+		<versions.org.jboss.resteasy>3.0.5.Final</versions.org.jboss.resteasy>
+
+	</properties>
+
+
     <parent>
         <groupId>org.javaee7.jaxrs</groupId>
         <artifactId>jaxrs-samples</artifactId>
@@ -14,8 +33,41 @@
     	<dependency>
  				<groupId>org.jboss.resteasy</groupId>
         <artifactId>resteasy-jaxb-provider</artifactId>
-        <version>3.0.5.Final</version>
+        <version>${versions.org.jboss.resteasy}</version>
         <scope>test</scope>
     	</dependency>
+
+			<dependency>
+				<groupId>org.wildfly</groupId>
+				<artifactId>wildfly-arquillian-container-managed</artifactId>
+				<version>${versions.org.wildfly.wildfly-arquillian-container-managed}</version>
+				<scope>test</scope>
+			</dependency>
+
     </dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>${versions.maven-surefire-plugin}</version>
+				<configuration>
+					<skip>true</skip>
+				</configuration>
+				<executions>
+					<execution>
+						<id>surefire-it</id>
+						<phase>integration-test</phase>
+						<goals>
+							<goal>test</goal>
+						</goals>
+						<configuration>
+							<skip>false</skip>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
 </project>
